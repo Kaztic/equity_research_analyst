@@ -1,0 +1,1 @@
+.\equity\Scripts\Activate.ps1

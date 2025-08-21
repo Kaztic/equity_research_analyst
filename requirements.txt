@@ -1,0 +1,28 @@
+# Core AI and Agent Framework
+pyautogen
+autogen-ext
+autogen-agentchat
+autogen-core
+openai
+
+# FastMCP Server and Dependencies
+mcp
+fastapi[all]
+uvicorn[standard]
+
+# Financial Data
+yfinance
+
+# Web Interface
+streamlit
+
+# Utilities
+python-dotenv
+pandas
+numpy
+
+# Optional for enhanced functionality
+requests
+aiohttp
+autogen
+fastapi
