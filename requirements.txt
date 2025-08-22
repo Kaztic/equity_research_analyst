@@ -1,9 +1,5 @@
-# Core AI and Agent Framework
-pyautogen
-autogen-ext
-autogen-agentchat
-autogen-core
-openai
+# Core AI and Dependencies
+google-generativeai
 
 # FastMCP Server and Dependencies
 mcp
@@ -24,5 +20,3 @@ numpy
 # Optional for enhanced functionality
 requests
 aiohttp
-autogen
-fastapi

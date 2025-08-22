@@ -1,0 +1,9 @@
+# Environment Variables Template for Equity Research Analyst
+# Copy this file to .env and fill in your actual API key
+
+# Google AI API Key for Gemini models
+# Get your API key from: https://aistudio.google.com/app/apikey
+GOOGLE_API_KEY=your_google_api_key_here
+
+# Note: Replace 'your_google_api_key_here' with your actual Google AI API key
+# Do not commit the .env file to version control

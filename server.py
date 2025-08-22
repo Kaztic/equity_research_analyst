@@ -1,6 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 import yfinance as yfinance
 
+# Initialize the MCP server
 mcp = FastMCP("FinanceTools")
 
 @mcp.tool()

@@ -5,7 +5,7 @@ A sophisticated equity research tool that leverages AI to provide comprehensive 
 ## ✨ Features
 
 - **Real-time Financial Data**: Fetches live stock data using Yahoo Finance
-- **AI-Powered Analysis**: Uses OpenAI GPT-4 to generate comprehensive fundamental analysis
+- **AI-Powered Analysis**: Uses Google Gemini 2.0 Flash to generate comprehensive fundamental analysis
 - **Professional Reports**: Structured analysis covering business summary, valuation metrics, and investment outlook
 - **Interactive UI**: Clean, professional Streamlit interface with download functionality
 - **MCP Integration**: Uses Model Context Protocol for robust tool orchestration
@@ -22,27 +22,27 @@ A sophisticated equity research tool that leverages AI to provide comprehensive 
                                 │                        │
                                 ▼                        ▼
                         ┌─────────────────┐    ┌─────────────────┐
-                        │   OpenAI GPT-4  │    │   Yahoo Finance │
-                        │   Analysis      │    │   Data API      │
+                        │   Google Gemini │    │   Yahoo Finance │
+                        │   2.0 Flash     │    │   Data API      │
                         └─────────────────┘    └─────────────────┘
 ```
 
 ## 📋 Prerequisites
 
 - Python 3.8 or higher
-- OpenAI API key
+- Google Gemini API key
 - Windows, macOS, or Linux
 
 ## 🚀 Quick Start
 
-### 1. Get Your OpenAI API Key
+### 1. Get Your Google Gemini API Key
 
-1. Visit [OpenAI Platform](https://platform.openai.com/)
-2. Sign up or log in to your account
-3. Navigate to [API Keys](https://platform.openai.com/api-keys)
-4. Click "Create new secret key"
+1. Visit [Google AI Studio](https://aistudio.google.com/)
+2. Sign up or log in to your Google account
+3. Navigate to [API Keys](https://aistudio.google.com/app/apikey)
+4. Click "Create API Key"
 5. Name your key (e.g., "Equity Research Tool")
-6. Copy the generated key (starts with `sk-...`)
+6. Copy the generated key
 7. **Important**: Save this key securely - you won't be able to see it again!
 
 ### 2. Clone or Download the Project
@@ -96,15 +96,15 @@ Create a `.env` file in the project root:
 
 ```bash
 # Windows
-echo OPENAI_API_KEY=your_openai_api_key_here > .env
+echo GEMINI_API_KEY=your_gemini_api_key_here > .env
 
 # macOS/Linux
-echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
+echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
 ```
 
 Or manually create `.env` file with:
 ```
-OPENAI_API_KEY=sk-your-actual-openai-api-key-here
+GEMINI_API_KEY=your-actual-gemini-api-key-here
 ```
 
 ### 6. Run the Application
@@ -155,7 +155,7 @@ pip install tiktoken autogen-ext autogen-agentchat autogen-core
 
 **2. API Key Errors**
 - Verify your `.env` file exists and contains the correct API key
-- Ensure your OpenAI account has available credits
+- Ensure your Google AI Studio account has available credits
 - Check that the API key starts with `sk-`
 
 **3. Virtual Environment Issues**
@@ -184,8 +184,8 @@ streamlit cache clear
 Test individual components:
 
 ```bash
-# Test OpenAI connection
-python -c "from main import run_equity_research; print('✅ OpenAI connection OK')"
+# Test Gemini connection
+python -c "from main import run_equity_research; print('✅ Gemini connection OK')"
 
 # Test MCP server
 python -m server
@@ -200,9 +200,9 @@ python -c "import yfinance as yf; print('✅ yfinance OK')"
 
 Edit `main.py` to change the AI model:
 ```python
-model_client = OpenAIChatCompletionClient(
-    model="gpt-4",  # or "gpt-3.5-turbo" for lower cost
-    api_key=openai_api_key,
+model_client = GeminiChatCompletionClient(
+    model="gemini-2.0-flash",
+    api_key=gemini_api_key,
 )
 ```
 
@@ -236,8 +236,8 @@ equity_research_analyst/
 ## 🔒 Security Notes
 
 - Never commit your `.env` file to version control
-- Keep your OpenAI API key secure and private
-- Monitor your OpenAI usage and costs
+- Keep your Gemini API key secure and private
+- Monitor your Gemini usage and costs
 - The `.gitignore` file protects sensitive files automatically
 
 ## 📈 Supported Markets
@@ -249,9 +249,9 @@ equity_research_analyst/
 
 ## 💰 Cost Considerations
 
-- Uses OpenAI GPT-4o-mini (cost-effective model)
+- Uses Google Gemini 2.0 Flash (cost-effective model)
 - Typical analysis costs ~$0.01-0.05 per request
-- Monitor usage at [OpenAI Usage Dashboard](https://platform.openai.com/usage)
+- Monitor usage at [Google AI Studio](https://aistudio.google.com/)
 
 ## 🤝 Contributing
 
@@ -270,7 +270,7 @@ This tool is for educational and research purposes only. It does not constitute 
 For issues and questions:
 1. Check the troubleshooting section above
 2. Verify your environment setup
-3. Check OpenAI API status and credits
+3. Check Gemini API status and credits
 4. Review the project's issue tracker
 
 ## 🎯 Roadmap
