@@ -42,20 +42,19 @@ if analyze_button:
                 analysis = run_equity_research(ticker.strip().upper())
                 if analysis and isinstance(analysis, str):
                     # Create a container for the analysis with custom styling
-                    st.markdown("---")
+                    st.markdown("<br>", unsafe_allow_html=True)
                     
                     # Display the analysis in a clean container
                     with st.container():
                         st.markdown("""
-                        <div style="background-color: #f8f9fa; padding: 2rem; border-radius: 10px; border-left: 4px solid #1f77b4;">
-                        """, unsafe_allow_html=True)
+                        # <div style="background-color: #f8f9fa; padding: 2rem; border-radius: 10px; border-left: 4px solid #1f77b4; margin-bottom: 2rem;">
+                        # """, unsafe_allow_html=True)
                         
                         st.markdown(analysis)
                         
                         st.markdown("</div>", unsafe_allow_html=True)
                     
                     # Add download button for the analysis
-                    st.markdown("---")
                     col1, col2, col3 = st.columns([1, 1, 1])
                     with col2:
                         st.download_button(

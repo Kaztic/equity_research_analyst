@@ -28,4 +28,5 @@ def get_stock_fundamentals(ticker: str) -> dict:
     return data
 
 if __name__ == "__main__":
+    print("Starting MCP server...")
     mcp.run(transport="stdio")
