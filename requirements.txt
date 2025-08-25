@@ -16,7 +16,7 @@ streamlit
 python-dotenv
 pandas
 numpy
-
-# Optional for enhanced functionality
 requests
 aiohttp
+googlesearch-python
+mcp
