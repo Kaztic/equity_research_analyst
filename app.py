@@ -13,14 +13,20 @@ st.set_page_config(
 st.markdown("""
 <style>
     .report-container {
-        background-color: #f8f9fa;
-        padding: 2rem;
-        border-radius: 10px;
-        border-left: 5px solid #1f77b4;
+        background-color: #ffffff;
+        padding: 2.5rem;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
         margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
     .stButton>button {
         font-weight: bold;
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+    }
+    h1, h2, h3 {
+        color: #1a1a1a;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -52,30 +58,29 @@ if analyze_button:
     if not ticker.strip():
         st.warning("Please enter a valid stock ticker.")
     else:
-        with st.spinner("Orchestrator is coordinating the AI agent team... This may take a moment."):
+        with st.spinner("Executing multi-agent workflow... Running financial models and market analysis (this can take up to 60 seconds)."):
             try:
-                # Call the main orchestrator function
                 analysis_report = run_equity_research(ticker.strip().upper())
                 
                 if analysis_report:
-                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("<hr>", unsafe_allow_html=True)
                     with st.container():
                         st.markdown('<div class="report-container">', unsafe_allow_html=True)
                         st.markdown(analysis_report)
                         st.markdown('</div>', unsafe_allow_html=True)
                     
                     st.download_button(
-                        label="📥 Download Full Report",
+                        label="Download Full Report (.md)",
                         data=analysis_report,
-                        file_name=f"{ticker.strip().upper()}_comprehensive_analysis.md",
+                        file_name=f"{ticker.strip().upper()}_SOTA_Analysis.md",
                         mime="text/markdown",
                         use_container_width=True
                     )
                 else:
-                    st.error("The agent team failed to generate an analysis. Please check the ticker and try again.")
+                    st.error("The agent team failed to generate a report. Please check the ticker and logs.")
             except Exception as e:
-                st.error(f"A critical error occurred: {e}")
-                st.info("Please ensure your GOOGLE_API_KEY is correctly configured in your .env file.")
+                st.error(f"A critical system error occurred: {e}")
+                st.info("Check your console logs and ensure your GOOGLE_API_KEY is correctly configured.")
 
 # --- Footer ---
 st.markdown("""

@@ -10,158 +10,131 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
-
-# --- Configuration ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# --- Agent 1: Quantitative Analyst Agent ---
-async def quantitative_analyst_agent(session: ClientSession, ticker: str) -> dict:
-    """
-    Agent 1: Fetches and processes all numerical data.
-    """
-    logging.info(f"[Quantitative Agent] Starting numerical analysis for {ticker}...")
-    try:
-        # Fetch fundamental data and historical trends in parallel
-        fundamentals_task = session.call_tool("get_stock_fundamentals", {"ticker": ticker})
-        historical_task = session.call_tool("get_historical_financials", {"ticker": ticker})
-        
-        results = await asyncio.gather(fundamentals_task, historical_task)
-        
-        fundamentals = results[0].content[0].text if hasattr(results[0], 'content') else results[0]
-        historical_data = results[1].content[0].text if hasattr(results[1], 'content') else results[1]
+# --- Agent 1: Financial Data Engine Agent ---
+async def financial_data_engine_agent(session: ClientSession, ticker: str) -> dict:
+    """Fetches all raw numerical data."""
+    logging.info(f"[Data Engine] Fetching comprehensive financial data for {ticker}...")
+    result = await session.call_tool("get_comprehensive_financial_data", {"ticker": ticker})
+    data = json.loads(result.content[0].text) if hasattr(result, 'content') else result
+    if "error" in data:
+        logging.error(f"[Data Engine] Failed: {data['error']}")
+    else:
+        logging.info("[Data Engine] Successfully fetched all financial data.")
+    return data
 
-        # Convert string results to dictionaries
-        fundamentals = json.loads(fundamentals) if isinstance(fundamentals, str) else fundamentals
-        historical_data = json.loads(historical_data) if isinstance(historical_data, str) else historical_data
-
-        if "error" in fundamentals or "error" in historical_data:
-            error_msg = fundamentals.get("error") or historical_data.get("error")
-            logging.error(f"[Quantitative Agent] Failed to fetch data: {error_msg}")
-            return {"error": f"Data fetching failed: {error_msg}"}
-
-        logging.info("[Quantitative Agent] Numerical data fetched successfully.")
-        return {
-            "fundamentals": fundamentals,
-            "historical_data": historical_data
-        }
-
-    except Exception as e:
-        logging.error(f"[Quantitative Agent] Error during analysis: {e}", exc_info=True)
-        return {"error": f"An unexpected error occurred in the Quantitative Agent: {e}"}
-
-# --- Agent 2: Qualitative Analyst Agent ---
-async def qualitative_analyst_agent(session: ClientSession, company_name: str, sector: str) -> str:
-    """
-    Agent 2: Gathers and synthesizes market sentiment and industry news.
-    """
-    logging.info(f"[Qualitative Agent] Starting market research for {company_name}...")
-    try:
-        # Perform targeted Google searches in parallel
-        news_query = f"latest news and analyst ratings for {company_name}"
-        industry_query = f"outlook and trends for the {sector} sector 2025"
-        
-        news_task = session.call_tool("perform_google_search", {"query": news_query})
-        industry_task = session.call_tool("perform_google_search", {"query": industry_query})
-        
-        results = await asyncio.gather(news_task, industry_task)
-        
-        news_results = results[0].content[0].text if hasattr(results[0], 'content') else results[0]
-        industry_results = results[1].content[0].text if hasattr(results[1], 'content') else results[1]
-
-        # Use an LLM to synthesize the search results
-        model = GenerativeModel(model_name="gemini-1.5-flash")
-        prompt = f"""
-        You are a Market Research Analyst. Your task is to synthesize the provided search results into a concise summary for an investment report.
-        Focus on the overall sentiment, key growth drivers, challenges, and the competitive landscape.
-
-        **Recent News & Analyst Ratings (Search Results):**
-        {news_results}
-
-        **Industry Outlook & Trends (Search Results):**
-        {industry_results}
-
-        **Synthesized Summary:**
-        Based on the information above, please provide a brief report covering:
-        1.  **Market Sentiment:** What is the general feeling about the company (e.g., bullish, bearish, neutral)? Mention any recent analyst upgrades or downgrades.
-        2.  **Industry Health:** Is the industry expected to grow, shrink, or remain stable? What are the key trends (e.g., AI adoption, regulatory changes, supply chain issues)?
-        """
-        
-        response = await model.generate_content_async(prompt)
-        logging.info("[Qualitative Agent] Market research summary generated.")
-        return response.text
-
-    except Exception as e:
-        logging.error(f"[Qualitative Agent] Error during analysis: {e}", exc_info=True)
-        return f"An error occurred in the Qualitative Agent: {e}"
-
-# --- Agent 3: Synthesis & Reporting Agent ---
-async def synthesis_reporting_agent(quantitative_data: dict, qualitative_analysis: str) -> str:
-    """
-    Agent 3: Combines all data into a final, user-friendly report.
-    """
-    logging.info("[Synthesis Agent] Generating final comprehensive report...")
-    model = GenerativeModel(model_name="gemini-1.5-flash")
+# --- Agent 2: Market Intelligence Agent ---
+async def market_intelligence_agent(session: ClientSession, company_name: str, sector: str) -> str:
+    """Gathers and synthesizes qualitative market data."""
+    logging.info(f"[Market Intelligence] Gathering qualitative data for {company_name}...")
+    queries = {
+        "news": f"latest news and analyst sentiment for {company_name}",
+        "industry": f"Porter's Five Forces analysis for the {sector} industry",
+        "transcripts": f"latest earnings call transcript summary for {company_name}"
+    }
     
+    tasks = [session.call_tool("perform_google_search", {"query": q}) for q in queries.values()]
+    results = await asyncio.gather(*tasks)
+
+    search_data = {key: (res.content[0].text if hasattr(res, 'content') else res) for key, res in zip(queries.keys(), results)}
+    
+    model = GenerativeModel(model_name="gemini-1.5-pro-latest")
     prompt = f"""
-    You are a Senior Investment Analyst creating a report for a retail investor. Your goal is to be clear, insightful, and easy to understand.
-    Use the provided Quantitative Data and Qualitative Analysis to generate a comprehensive report. **Explain what the data MEANS in simple terms.**
+    As a Market Intelligence Analyst, synthesize the following search results into a concise qualitative report.
 
-    **Quantitative Data:**
-    ```json
-    {json.dumps(quantitative_data, indent=2)}
-    ```
+    **Recent News & Sentiment:**
+    {search_data['news']}
 
-    **Qualitative Analysis & Market Research:**
-    ---
-    {qualitative_analysis}
-    ---
+    **Industry Competitive Landscape (Porter's Five Forces):**
+    {search_data['industry']}
 
-    **Generate the full report using this exact Markdown structure:**
+    **Earnings Call Insights:**
+    {search_data['transcripts']}
 
-    # Comprehensive Analysis for {quantitative_data['fundamentals'].get('companyName')} ({quantitative_data['fundamentals'].get('ticker')})
-
-    ## 📊 At-a-Glance Scorecard
-    *   **Valuation:** (e.g., Appears Undervalued/Fairly Valued/Overvalued compared to earnings and assets.)
-    *   **Financial Health:** (e.g., Strong/Moderate/Weak based on debt and profitability.)
-    *   **Growth:** (e.g., Strong/Stable/Declining sales and earnings trends.)
-    *   **Market Sentiment:** (e.g., Positive/Neutral/Negative based on news and industry outlook.)
-
-    ## 📝 Executive Summary
-    - Provide a 3-4 sentence summary of the key takeaways from the entire analysis. Start with the company's market position and conclude with the primary risks and opportunities.
-
-    ## 🏢 Company & Industry Overview
-    - **Business Model:** Briefly summarize the company's business based on the 'longBusinessSummary'.
-    - **Industry Context:** Briefly describe the industry outlook based on the qualitative analysis.
-
-    ## 📈 Financial Performance & Health
-    - **Historical Trends:** Analyze the 3-year trend for Revenue and Net Income. Is the company growing? Is it consistently profitable?
-    - **Profitability:** Explain Return on Equity (ROE) and what the current figure means for shareholder value.
-    - **Debt Analysis:** Explain the Debt-to-Equity ratio. Is the company's debt level a concern?
-
-    ## 밸 Valuation Analysis
-    - **P/E Ratios:** Explain the Trailing and Forward P/E ratios in simple terms. Is the stock cheap or expensive relative to its own earnings?
-    - **P/B Ratio:** Explain the Price-to-Book ratio. What does it suggest about how the market values the company's assets?
-
-    ## 🔍 Investment Thesis: Strengths & Risks
-    - **Potential Strengths (Bull Case):**
-        - (List 2-3 key strengths based on all available data, e.g., market leadership, strong profitability, high institutional ownership.)
-    - **Potential Risks (Bear Case):**
-        - (List 2-3 key risks, e.g., high valuation, industry headwinds, high debt, poor recent performance.)
-
-    ## ⚠️ Disclaimer
-    - Add a standard disclaimer: "This AI-generated analysis is for informational purposes only and not financial advice. Always conduct your own research."
+    **Synthesized Report:**
+    1.  **Executive Sentiment & Key Themes:** Based on the earnings call, what is management's tone (confident, cautious)? What are the key strategic focus areas?
+    2.  **SWOT Analysis:** Based on all data, provide a brief SWOT (Strengths, Weaknesses, Opportunities, Threats) analysis.
+    3.  **Market Position (Porter's Analysis):** Briefly analyze the company's competitive standing within its industry based on the search results.
     """
     response = await model.generate_content_async(prompt)
-    logging.info("[Synthesis Agent] Final report generated successfully.")
+    logging.info("[Market Intelligence] Successfully synthesized qualitative data.")
+    return response.text
+
+# --- Agent 3: Valuation Modeling Agent ---
+async def valuation_modeling_agent(session: ClientSession, financial_data: dict) -> dict:
+    """Performs DCF and Monte Carlo simulations."""
+    logging.info("[Valuation Modeler] Running DCF and Monte Carlo simulations...")
+    result = await session.call_tool("perform_dcf_and_monte_carlo", {"financial_data": financial_data})
+    data = json.loads(result.content[0].text) if hasattr(result, 'content') else result
+    if "error" in data:
+        logging.error(f"[Valuation Modeler] Failed: {data['error']}")
+    else:
+        logging.info("[Valuation Modeler] Financial models generated successfully.")
+    return data
+
+# --- Agent 4: Strategic Synthesis Agent ---
+async def strategic_synthesis_agent(financial_data: dict, market_analysis: str, valuation_models: dict) -> str:
+    """Combines all analyses into a professional-grade investment thesis."""
+    logging.info("[Chief Analyst] Synthesizing all data into the final report...")
+    model = GenerativeModel(model_name="gemini-1.5-pro-latest")
+    
+    prompt = f"""
+    As a Senior Equity Research Analyst, create a state-of-the-art investment report. Integrate the provided quantitative data, market intelligence, and valuation models into a cohesive, professional thesis.
+
+    **1. Raw Financial & Ownership Data:**
+    ```json
+    {json.dumps(financial_data['info'], indent=2)}
+    ```
+
+    **2. Qualitative Market Intelligence Report:**
+    ---
+    {market_analysis}
+    ---
+
+    **3. Intrinsic Value Modeling Results:**
+    ```json
+    {json.dumps(valuation_models, indent=2)}
+    ```
+
+    **Generate the Final Report using this exact structure:**
+
+    # Professional Equity Research Report: {financial_data['info'].get('shortName')} ({financial_data['info'].get('ticker')})
+
+    ## 1. Executive Summary & Investment Thesis
+    - **Thesis:** Start with a one-sentence investment thesis (e.g., "We rate [Company] a 'Buy' due to its durable competitive advantages and undervalued status...").
+    - **Valuation Summary:** State the current price vs. the calculated intrinsic value from the DCF and Monte Carlo models.
+    - **Key Drivers:** List 2-3 key factors that support the thesis.
+    - **Primary Risks:** List 2-3 primary risks that could invalidate the thesis.
+
+    ## 2. Intrinsic Value Analysis (DCF & Monte Carlo)
+    - **Base Case DCF:** Explain the intrinsic value calculated from the base-case DCF. Compare this to the current stock price.
+    - **Probabilistic Valuation (Monte Carlo):** Explain the valuation range (25th-75th percentile) from the Monte Carlo simulation. State the median value and what the range implies about valuation uncertainty.
+    - **Valuation Verdict:** Based on the models, conclude whether the stock appears Undervalued, Fairly Valued, or Overvalued.
+
+    ## 3. Strategic & Qualitative Analysis
+    - **Business Moat (Competitive Advantage):** Based on the SWOT and Porter's analysis, what is the source and strength of the company's competitive advantage?
+    - **Management Outlook:** What was the tone and focus of the latest earnings call? Are there any forward-looking statements of note?
+    - **Institutional Conviction:** Comment on the percentage of shares held by institutions. Is this high or low for its sector?
+
+    ## 4. Financial Health & Performance
+    - **Profitability & Efficiency:** Analyze Return on Equity (ROE) and Debt-to-Equity. Is the company generating strong returns on its capital? Is its debt manageable?
+    - **Growth Trajectory:** Briefly comment on the historical revenue and earnings growth rates. Does this support the assumptions used in the DCF model?
+
+    ## 5. Risk Analysis
+    - **Bear Case:** Elaborate on the primary risks. What internal or external factors could cause the stock to underperform?
+    - **Insider Activity:** Briefly mention if there have been any significant insider transactions (buying or selling) as a potential signal.
+
+    ## 6. Disclaimer
+    - This report is an AI-generated analysis based on public data and simplified financial models. It is not financial advice. All investment decisions should be made with a qualified financial professional after conducting personal due diligence. The assumptions used in the DCF model may not reflect future reality.
+    """
+    response = await model.generate_content_async(prompt)
+    logging.info("[Chief Analyst] Final report generation complete.")
     return response.text
 
 # --- Main Orchestrator ---
 async def run_equity_research_async(ticker: str) -> str:
-    """
-    Orchestrates the new multi-agent system to perform enhanced equity research.
-    """
     try:
         genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
     except KeyError:
@@ -169,33 +142,30 @@ async def run_equity_research_async(ticker: str) -> str:
 
     server_params = StdioServerParameters(command="python", args=["server.py"])
     
-    logging.info("--- Orchestrator: Starting Enhanced Workflow ---")
+    logging.info(f"--- Orchestrator: Initiating multi-agent workflow for {ticker} ---")
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
             
-            # Step 1: Call Quantitative Agent
-            quantitative_data = await quantitative_analyst_agent(session, ticker)
-            if "error" in quantitative_data:
-                return quantitative_data["error"]
+            # Agent 1: Fetch Data
+            financial_data = await financial_data_engine_agent(session, ticker)
+            if "error" in financial_data: return f"Workflow failed at Data Engine: {financial_data['error']}"
 
-            company_name = quantitative_data['fundamentals'].get('companyName', ticker)
-            sector = quantitative_data['fundamentals'].get('sector', 'technology')
+            # Agent 2 & 3: Run in parallel
+            market_intel_task = market_intelligence_agent(session, financial_data['info'].get('shortName', ticker), financial_data['info'].get('sector', ''))
+            valuation_model_task = valuation_modeling_agent(session, financial_data)
+            market_analysis, valuation_models = await asyncio.gather(market_intel_task, valuation_model_task)
+            
+            if "error" in valuation_models: return f"Workflow failed at Valuation Modeler: {valuation_models['error']}"
 
-            # Step 2: Call Qualitative Agent
-            qualitative_analysis = await qualitative_analyst_agent(session, company_name, sector)
-            if "error" in qualitative_analysis:
-                return qualitative_analysis # Return error if qualitative analysis fails
-
-            # Step 3: Call Synthesis & Reporting Agent
-            final_report = await synthesis_reporting_agent(quantitative_data, qualitative_analysis)
+            # Agent 4: Synthesize Final Report
+            final_report = await strategic_synthesis_agent(financial_data, market_analysis, valuation_models)
             
             logging.info("--- Orchestrator: Workflow Completed Successfully ---")
             return final_report
 
     return "Orchestrator: Failed to complete the workflow."
 
-# --- Synchronous Wrapper for Streamlit ---
 def run_equity_research(ticker: str) -> str:
     try:
         return asyncio.run(run_equity_research_async(ticker))
