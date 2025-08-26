@@ -168,7 +168,13 @@ async def run_equity_research_async(ticker: str) -> str:
         return "Error: GOOGLE_API_KEY environment variable is not set."
 
     server_params = StdioServerParameters(command="python", args=["server.py"])
-    
+    # If we were to Connect to remote MCP server (e.g. yfinance-mcp)
+    """ 
+        server_params = TCPServerParameters(
+            host="api.yfinance-mcp.com",  # hypothetical remote server
+            port=8080
+        )
+    """
     logging.info("--- Orchestrator: Starting Workflow ---")
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
@@ -202,3 +208,4 @@ def run_equity_research(ticker: str) -> str:
     except Exception as e:
         logging.error(f"Failed to execute the asyncio event loop: {e}", exc_info=True)
         return f"A critical application error occurred: {e}"
+
