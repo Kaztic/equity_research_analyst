@@ -58,7 +58,7 @@ async def market_intelligence_agent(session: ClientSession, company_name: str, s
     2.  **SWOT Analysis:** Based on all data, provide a brief SWOT (Strengths, Weaknesses, Opportunities, Threats) analysis.
     3.  **Market Position (Porter's Analysis):** Briefly analyze the company's competitive standing within its industry based on the search results.
     """
-    response = await model.generate_content_async(prompt)
+    response = model.generate_content(prompt)
     logging.info("[Market Intelligence] Successfully synthesized qualitative data.")
     return response.text
 
@@ -129,7 +129,7 @@ async def strategic_synthesis_agent(financial_data: dict, market_analysis: str, 
     ## 6. Disclaimer
     - This report is an AI-generated analysis based on public data and simplified financial models. It is not financial advice. All investment decisions should be made with a qualified financial professional after conducting personal due diligence. The assumptions used in the DCF model may not reflect future reality.
     """
-    response = await model.generate_content_async(prompt)
+    response = model.generate_content(prompt)
     logging.info("[Chief Analyst] Final report generation complete.")
     return response.text
 
@@ -151,10 +151,9 @@ async def run_equity_research_async(ticker: str) -> str:
             financial_data = await financial_data_engine_agent(session, ticker)
             if "error" in financial_data: return f"Workflow failed at Data Engine: {financial_data['error']}"
 
-            # Agent 2 & 3: Run in parallel
-            market_intel_task = market_intelligence_agent(session, financial_data['info'].get('shortName', ticker), financial_data['info'].get('sector', ''))
-            valuation_model_task = valuation_modeling_agent(session, financial_data)
-            market_analysis, valuation_models = await asyncio.gather(market_intel_task, valuation_model_task)
+            # Agent 2 & 3: Run sequentially to avoid event loop conflicts
+            market_analysis = await market_intelligence_agent(session, financial_data['info'].get('shortName', ticker), financial_data['info'].get('sector', ''))
+            valuation_models = await valuation_modeling_agent(session, financial_data)
             
             if "error" in valuation_models: return f"Workflow failed at Valuation Modeler: {valuation_models['error']}"
 
