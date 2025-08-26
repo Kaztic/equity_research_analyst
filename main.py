@@ -101,7 +101,7 @@ async def synthesis_reporting_agent(quantitative_data: dict, qualitative_analysi
     """
     Agent 3: Combines all data into a final, user-friendly report.
     """
-    logging.info("[Synthesis Agent] Generating final comprehensive report...")
+    logging.info("[Synthesis Agent] Generating final report...")
     model = GenerativeModel(model_name="gemini-2.0-flash")
     
     prompt = f"""
@@ -120,7 +120,7 @@ async def synthesis_reporting_agent(quantitative_data: dict, qualitative_analysi
 
     **Generate the full report using this exact Markdown structure:**
 
-    # Comprehensive Analysis for {quantitative_data['fundamentals'].get('companyName')} ({quantitative_data['fundamentals'].get('ticker')})
+    # Analysis for {quantitative_data['fundamentals'].get('companyName')} ({quantitative_data['fundamentals'].get('ticker')})
 
     ## 📊 At-a-Glance Scorecard
     *   **Valuation:** (e.g., Appears Undervalued/Fairly Valued/Overvalued compared to earnings and assets.)

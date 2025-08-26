@@ -1,10 +1,10 @@
 # 📈 AI Equity Research Analyst
 
-An equity research tool powered by a team of specialized AI agents. Built with Streamlit, Google Gemini AI, and FastMCP, this application provides comprehensive fundamental analysis of stocks using real-time financial data.
+An equity research tool powered by a team of specialized AI agents. Built with Streamlit, Google Gemini AI, and FastMCP, this application provides fundamental analysis of stocks using real-time financial data.
 
 ## Features
 
-- **Multi-Agent AI System**: Three specialized agents working together for comprehensive analysis
+- **Multi-Agent AI System**: Three specialized agents working together for analysis
 - **Real-time Financial Data**: Live stock data from Yahoo Finance API
 - **Market Intelligence**: News and industry trend analysis via Google Search
 - **Professional Reports**: Structured investment analysis with scorecards and insights

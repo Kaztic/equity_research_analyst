@@ -29,7 +29,7 @@ st.markdown("""
 st.markdown("""
 <div style="text-align: center; padding: 1rem 0;">
     <h1 style="color: #1f77b4; margin-bottom: 0.5rem;">Multi-Agent AI Equity Research Platform</h1>
-    <p style="color: #666; font-size: 1.1rem;">Comprehensive analysis by a team of specialized AI agents</p>
+    <p style="color: #666; font-size: 1.1rem;"> Analysis by a team of specialized AI agents</p>
 </div>
 """, unsafe_allow_html=True)
 
