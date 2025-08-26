@@ -1,83 +1,121 @@
 # 📈 AI Equity Research Analyst
 
-A sophisticated equity research tool that leverages AI to provide comprehensive fundamental analysis of stocks. Built with Streamlit, Google Gemini AI, and FastMCP, this application fetches real-time financial data and generates professional investment analysis reports through a multi-agent system.
+An equity research tool powered by a team of specialized AI agents. Built with Streamlit, Google Gemini AI, and FastMCP, this application provides comprehensive fundamental analysis of stocks using real-time financial data.
 
-## ✨ Features
+## Features
 
-- **Real-time Financial Data**: Fetches live stock data using Yahoo Finance
-- **AI-Powered Analysis**: Uses Google Gemini AI to generate comprehensive fundamental analysis
-- **Multi-Agent System**: Three specialized AI agents working together for comprehensive analysis
-- **Professional Reports**: Structured analysis covering business summary, valuation metrics, and investment outlook
-- **Interactive UI**: Clean, professional Streamlit interface with download functionality
-- **MCP Integration**: Uses Model Context Protocol for robust tool orchestration
-- **Global Stock Support**: Supports US stocks and international markets
+- **Multi-Agent AI System**: Three specialized agents working together for comprehensive analysis
+- **Real-time Financial Data**: Live stock data from Yahoo Finance API
+- **Market Intelligence**: News and industry trend analysis via Google Search
+- **Professional Reports**: Structured investment analysis with scorecards and insights
+- **Interactive UI**: Clean Streamlit interface with downloadable reports
+- **Global Stock Support**: US and international markets (NYSE, NASDAQ, NSE, etc.)
 
-## 🏗️ Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Streamlit     │    │   Multi-Agent   │    │   FastMCP       │
-│   Frontend      │───▶│   Orchestrator  │───▶│   Tool Server   │
-│   (app.py)      │    │   (main.py)     │    │   (server.py)   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │                        │
-                                ▼                        ▼
-                        ┌─────────────────┐    ┌─────────────────┐
-                        │   Google Gemini │    │   Yahoo Finance │
-                        │   AI Models     │    │   Data API      │
-                        └─────────────────┘    └─────────────────┘
-```
-
-### **Data Flow Architecture**
+## 🤖 Multi-Agent Architecture
 
 ```
 ┌─────────────────┐
 │   User Input    │
-│   (Stock Ticker)│
+│ (Stock Ticker)  │
 └─────────┬───────┘
           │
           ▼
 ┌─────────────────┐
-│  Streamlit UI   │
-│   (app.py)      │
+│ Streamlit UI    │
+│    (app.py)     │
 └─────────┬───────┘
           │
           ▼
 ┌─────────────────┐
 │ Multi-Agent     │
-│ Orchestrator    │
+│  Orchestrator   │
 │   (main.py)     │
-└─────────┬───────┘
-          │
-          ├─────────────────┬─────────────────┐
-          │                 │                 │
-          ▼                 ▼                 ▼
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│   Agent 1:      │ │   Agent 2:      │ │   Agent 3:      │
-│ Data Fetcher    │ │Financial Analyst│ │Investment      │
-│ (MCP Tools)     │ │(Google Gemini)  │ │Advisor         │
-└─────────┬───────┘ └─────────┬───────┘ └─────────┬───────┘
-          │                   │                   │
-          ▼                   ▼                   ▼
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ Yahoo Finance   │ │ Financial Data  │ │ Analysis +      │
-│ Data via MCP    │ │ Processing      │ │ Outlook         │
-└─────────────────┘ └─────────────────┘ └─────────────────┘
-          │                   │                   │
-          └───────────────────┼───────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │ Final Report    │
-                    │ (Markdown)      │
-                    └─────────────────┘
+└─────┬───────────┘
+      │
+      ├─────────────────┬─────────────────┐
+      │                 │                 │
+      ▼                 ▼                 ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│   Agent 1   │ │   Agent 2   │ │   Agent 3   │
+│Quantitative │ │ Qualitative │ │ Synthesis & │
+│  Analyst    │ │  Analyst    │ │ Reporting   │
+└─────┬───────┘ └─────┬───────┘ └─────┬───────┘
+      │               │               │
+      ▼               ▼               ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│ MCP Server  │ │Google Gemini│ │Google Gemini│
+│ (server.py) │ │ AI Model    │ │ AI Model    │
+└─────┬───────┘ └─────────────┘ └─────────────┘
+      │
+      ├─────────────────┬─────────────────┐
+      │                 │                 │
+      ▼                 ▼                 ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+│Yahoo Finance│ │Google Search│ │ Final Report│
+│Financial Data│ │ News & Data │ │ (Markdown)  │
+└─────────────┘ └─────────────┘ └─────────────┘
 ```
 
-### **Multi-Agent System Components**
+## 🔄 Workflow Process
 
-1. **Data Fetching Agent**: Retrieves financial data using MCP tools
-2. **Financial Analyst Agent**: Analyzes data and generates structured reports
-3. **Investment Advisor Agent**: Provides investment outlook and disclaimers
+```
+User Input → Streamlit UI → Multi-Agent Orchestrator
+                                      │
+        ┌─────────────────────────────┼─────────────────────────────┐
+        │                             │                             │
+        ▼                             ▼                             ▼
+┌─────────────────┐          ┌─────────────────┐          ┌─────────────────┐
+│   AGENT 1:      │          │   AGENT 2:      │          │   AGENT 3:      │
+│ Quantitative    │          │ Qualitative     │          │ Synthesis &     │
+│ Analyst         │          │ Analyst         │          │ Reporting       │
+│                 │          │                 │          │                 │
+│ Fetches:        │          │ Researches:     │          │ Creates:        │
+│ • Stock data    │          │ • Latest news   │          │ • Final report  │
+│ • Fundamentals  │          │ • Industry trends│         │ • Scorecard     │
+│ • 3yr financials│          │ • Market sentiment│        │ • Investment    │
+│                 │          │                 │          │   thesis        │
+│ Data Sources:   │          │ Data Sources:   │          │                 │
+│ • Yahoo Finance │          │ • Google Search │          │ Uses Gemini AI  │
+│ • Via MCP Tools │          │ • Gemini AI     │          │ to synthesize   │
+└─────────────────┘          └─────────────────┘          └─────────────────┘
+        │                             │                             │
+        └─────────────────────────────┼─────────────────────────────┘
+                                      ▼
+                          ┌─────────────────────┐
+                          │   FINAL OUTPUT:     │
+                          │ Comprehensive       │
+                          │ Investment Report   │
+                          │ (Downloadable MD)   │
+                          └─────────────────────┘
+```
+
+## 🎯 The Three AI Agents
+
+### 1. **Quantitative Analyst Agent** (`quantitative_analyst_agent`)
+- **Role**: Numbers specialist - fetches and processes all financial data
+- **Data Sources**: Yahoo Finance via MCP tools
+- **Output**: 
+  - Fundamental metrics (P/E, ROE, debt ratios, market cap)
+  - 3-year historical financials (revenue, net income trends)
+  - Key valuation and performance indicators
+
+### 2. **Qualitative Analyst Agent** (`qualitative_analyst_agent`) 
+- **Role**: Market research specialist - analyzes sentiment and trends
+- **Data Sources**: Google Search for news and industry analysis
+- **AI Processing**: Uses Gemini AI to synthesize search results
+- **Output**:
+  - Market sentiment analysis (bullish/bearish/neutral)
+  - Industry outlook and competitive landscape
+  - Recent news and analyst rating insights
+
+### 3. **Synthesis & Reporting Agent** (`synthesis_reporting_agent`)
+- **Role**: Report writer - combines all data into final analysis
+- **AI Processing**: Uses Gemini AI to create comprehensive reports
+- **Output**:
+  - Executive summary with key takeaways
+  - At-a-glance scorecard (valuation, health, growth, sentiment)
+  - Investment thesis with strengths and risks
+  - Professional markdown report ready for download
 
 ## 📋 Prerequisites
 
@@ -89,22 +127,14 @@ A sophisticated equity research tool that leverages AI to provide comprehensive 
 
 ### 1. Get Your Google Gemini API Key
 
-1. Visit [Google AI Studio](https://aistudio.google.com/)
-2. Sign up or log in to your Google account
-3. Navigate to [API Keys](https://aistudio.google.com/app/apikey)
-4. Click "Create API Key"
-5. Name your key (e.g., "Equity Research Tool")
-6. Copy the generated key
-7. **Important**: Save this key securely - you won't be able to see it again!
+Visit [Google AI Studio (MakerSuite)](https://makersuite.google.com/)
 
 ### 2. Clone or Download the Project
 
 ```bash
-git clone <your-repository-url>
+git clone <repository-url>
 cd equity_research_analyst
 ```
-
-Or download and extract the project files to a folder named `equity_research_analyst`.
 
 ### 3. Set Up Virtual Environment
 
@@ -141,17 +171,7 @@ pip install -r requirements.txt
 
 ### 5. Configure Environment Variables
 
-Create a `.env` file in the project root:
-
-```bash
-# Windows
-echo GOOGLE_API_KEY=your_google_api_key_here > .env
-
-# macOS/Linux
-echo "GOOGLE_API_KEY=your_google_api_key_here" > .env
-```
-
-Or manually create `.env` file with:
+Create a `.env` file in the project root and add the Google API Key:
 ```
 GOOGLE_API_KEY=your-actual-google-api-key-here
 ```
@@ -181,88 +201,25 @@ Network URL: http://your-ip:8501
 5. **Review the report** with comprehensive fundamental analysis
 6. **Download the report** as a Markdown file using the download button
 
-## 🔄 Workflow Process
+## 🔄 How It Works
 
-### **Step 1: Data Collection**
-- The Data Fetching Agent uses MCP tools to retrieve real-time financial data
-- Fetches key metrics: market cap, P/E ratios, dividend yield, 52-week range
-- Validates data quality and handles errors gracefully
-
-### **Step 2: Financial Analysis**
-- The Financial Analyst Agent processes the raw data
-- Uses Google Gemini AI to generate structured analysis
-- Covers company overview, key metrics, and valuation analysis
-
-### **Step 3: Investment Outlook**
-- The Investment Advisor Agent provides balanced summary
-- Generates forward-looking statements and risk disclaimers
-- Ensures compliance with financial advisory standards
-
-### **Step 4: Report Generation**
-- Combines all agent outputs into a comprehensive report
-- Formats in clean Markdown for easy reading and downloading
-- Provides professional presentation suitable for investment research
+1. **User Input**: Enter any stock ticker (e.g., AAPL, TSLA, GOOGL)
+2. **Agent 1** fetches live financial data from Yahoo Finance
+3. **Agent 2** researches market sentiment and industry trends via Google Search  
+4. **Agent 3** combines everything into a professional investment report
+5. **Output**: Comprehensive analysis with scorecard, insights, and download option
 
 ## 📊 Sample Analysis Output
 
-The tool generates structured reports including:
+Each report includes:
 
-- **Company Overview**: Company description and business summary
-- **Key Financial Metrics Analysis**: Market cap, P/E ratios, dividend yield analysis
-- **Stock Performance**: 52-week high/low analysis and price range commentary
-- **Investment Summary & Outlook**: Balanced assessment and forward-looking statements
-- **Disclaimer**: Standard financial advisory disclaimers
-
-## 🛠️ Troubleshooting
-
-### Common Issues
-
-**1. Import Errors**
-```bash
-# Install missing dependencies
-pip install -r requirements.txt
-```
-
-**2. API Key Errors**
-- Verify your `.env` file exists and contains the correct API key
-- Ensure your Google AI Studio account has available credits
-- Check that the API key is properly formatted
-
-**3. Virtual Environment Issues**
-```bash
-# Deactivate and recreate environment
-deactivate
-rm -rf equity  # or Remove-Item -Recurse -Force equity on Windows
-python -m venv equity
-# Re-activate and reinstall dependencies
-```
-
-**4. Port Already in Use**
-```bash
-# Run on different port
-streamlit run app.py --server.port 8502
-```
-
-**5. Streamlit Cache Issues**
-```bash
-# Clear Streamlit cache
-streamlit cache clear
-```
-
-### Verification Commands
-
-Test individual components:
-
-```bash
-# Test Gemini connection
-python -c "from main import run_equity_research; print('✅ Gemini connection OK')"
-
-# Test MCP server
-python server.py
-
-# Test stock data
-python -c "import yfinance as yf; print('✅ yfinance OK')"
-```
+- **📊 At-a-Glance Scorecard**: Valuation, Financial Health, Growth, Market Sentiment
+- **📝 Executive Summary**: Key takeaways and investment highlights  
+- **🏢 Company & Industry Overview**: Business model and sector context
+- **📈 Financial Performance & Health**: 3-year trends, profitability, debt analysis
+- **💰 Valuation Analysis**: P/E ratios, P/B ratios explained in simple terms
+- **🔍 Investment Thesis**: Bull case strengths vs bear case risks
+- **⚠️ Disclaimer**: Standard financial advisory disclaimers
 
 ##  Configuration
 
@@ -270,7 +227,7 @@ python -c "import yfinance as yf; print('✅ yfinance OK')"
 
 Edit `main.py` to change the AI model:
 ```python
-model = GenerativeModel(model_name="gemini-1.5-flash")
+model = GenerativeModel(model_name="gemini-2.0-flash")
 ```
  templates in `main.py` to customize the analysis format and focus areas.
 
@@ -278,17 +235,16 @@ model = GenerativeModel(model_name="gemini-1.5-flash")
 
 ```
 equity_research_analyst/
-├── app.py              # Streamlit frontend
-├── main.py             # Multi-agent orchestration system
-├── server.py           # FastMCP tool server
-├── requirements.txt    # Python dependencies
-├── .env               # Environment variables (not in git)
-├── .gitignore         # Git ignore rules
-├── README.md          # This file
-├── env_template.txt   # Environment variables template
-├── activate.sh        # Quick activation script (Linux/Mac)
-├── start.bat          # Quick start script (Windows)
-└── equity/            # Virtual environment (not in git)
+├── app.py              # 🖥️  Streamlit frontend UI
+├── main.py             # 🤖 Multi-agent orchestrator (3 AI agents)
+├── server.py           # 🔧 FastMCP tool server (Yahoo Finance + Google Search)
+├── requirements.txt    # 📦 Python dependencies
+├── .env               # 🔑 Environment variables (create this)
+├── README.md          # 📖 This documentation
+├── env_template.txt   # 📝 Environment template
+├── activate.sh        # 🐧 Linux/Mac activation script
+├── start.bat          # 🪟 Windows start script
+└── equity/            # 📂 Virtual environment folder
 ```
 ## 📈 Supported Markets
 

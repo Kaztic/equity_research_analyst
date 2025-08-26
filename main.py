@@ -71,7 +71,7 @@ async def qualitative_analyst_agent(session: ClientSession, company_name: str, s
         industry_results = results[1].content[0].text if hasattr(results[1], 'content') else results[1]
 
         # Use an LLM to synthesize the search results
-        model = GenerativeModel(model_name="gemini-1.5-flash")
+        model = GenerativeModel(model_name="gemini-2.0-flash")
         prompt = f"""
         You are a Market Research Analyst. Your task is to synthesize the provided search results into a concise summary for an investment report.
         Focus on the overall sentiment, key growth drivers, challenges, and the competitive landscape.
@@ -102,7 +102,7 @@ async def synthesis_reporting_agent(quantitative_data: dict, qualitative_analysi
     Agent 3: Combines all data into a final, user-friendly report.
     """
     logging.info("[Synthesis Agent] Generating final comprehensive report...")
-    model = GenerativeModel(model_name="gemini-1.5-flash")
+    model = GenerativeModel(model_name="gemini-2.0-flash")
     
     prompt = f"""
     You are a Senior Investment Analyst creating a report for a retail investor. Your goal is to be clear, insightful, and easy to understand.
@@ -140,7 +140,7 @@ async def synthesis_reporting_agent(quantitative_data: dict, qualitative_analysi
     - **Profitability:** Explain Return on Equity (ROE) and what the current figure means for shareholder value.
     - **Debt Analysis:** Explain the Debt-to-Equity ratio. Is the company's debt level a concern?
 
-    ## 밸 Valuation Analysis
+    ## 💰 Valuation Analysis
     - **P/E Ratios:** Explain the Trailing and Forward P/E ratios in simple terms. Is the stock cheap or expensive relative to its own earnings?
     - **P/B Ratio:** Explain the Price-to-Book ratio. What does it suggest about how the market values the company's assets?
 
@@ -150,7 +150,7 @@ async def synthesis_reporting_agent(quantitative_data: dict, qualitative_analysi
     - **Potential Risks (Bear Case):**
         - (List 2-3 key risks, e.g., high valuation, industry headwinds, high debt, poor recent performance.)
 
-    ## ⚠️ Disclaimer
+    ## Disclaimer
     - Add a standard disclaimer: "This AI-generated analysis is for informational purposes only and not financial advice. Always conduct your own research."
     """
     response = await model.generate_content_async(prompt)
@@ -169,7 +169,7 @@ async def run_equity_research_async(ticker: str) -> str:
 
     server_params = StdioServerParameters(command="python", args=["server.py"])
     
-    logging.info("--- Orchestrator: Starting Enhanced Workflow ---")
+    logging.info("--- Orchestrator: Starting Workflow ---")
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -195,7 +195,7 @@ async def run_equity_research_async(ticker: str) -> str:
 
     return "Orchestrator: Failed to complete the workflow."
 
-# --- Synchronous Wrapper for Streamlit ---
+# Synchronous Wrapper for Streamlit ---
 def run_equity_research(ticker: str) -> str:
     try:
         return asyncio.run(run_equity_research_async(ticker))
